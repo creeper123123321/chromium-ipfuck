@@ -2,42 +2,49 @@
 <html>
     <head>
         <title>IPFuck</title>
-        <link rel="stylesheet" type="text/css" href="popup.css" />
+        <link rel="stylesheet" type="text/css" href="popup.css">
+        <meta charset="UTF-8">
     </head>
     <body>
         <h2>IPFuck</h2>
         <form id="form">
-            <label><input type="checkbox" id="enabled" />
+            <label><input type="checkbox" id="enabled">
                     Enable IPFuck</label>
             <fieldset>
                 <legend>Headers to overwrite</legend>
-                <label><input type="checkbox" id="header-X-Forwarded-For" />
-                    X-Forwarded-For</label><br />
-                <label><input type="checkbox" id="header-Client-Ip" />
-                    Client-Ip</label><br />
-                <label><input type="checkbox" id="header-Via" />
-                    Via</label>
+                <p><label><input type="checkbox" id="header-X-Forwarded-For">
+                    X-Forwarded-For</label></p>
+                <p><label><input type="checkbox" id="header-Client-Ip">
+                    Client-Ip</label></p>
+                <p><label><input type="checkbox" id="header-Via">
+                    Via</label></p>
+                <p><label><input type="checkbox" id="header-X-Real-IP">
+                    X-Real-IP</label></p>
             </fieldset>
 
             <div class="b-tabs">
                 <div class="b-tab-range">
-                    <input type="radio" name="b-rad" class="b-rad" id="b-rad-range" checked />
+                    <input type="radio" name="b-rad" class="b-rad" id="b-rad-range" checked>
                     <label for="b-rad-range"><span>IP Range</span></label>
                     <div class="tab-content">
-                        <span class="ip-input-label">From:</span>
-                        <input type="number" id="ip-range-from-a" min="0" max="255" /> .
-                        <input type="number" id="ip-range-from-b" min="0" max="255" /> .
-                        <input type="number" id="ip-range-from-c" min="0" max="255" /> .
-                        <input type="number" id="ip-range-from-d" min="0" max="255" /><br />
-                        <span class="ip-input-label">To:</span>
-                        <input type="number" id="ip-range-to-a" min="0" max="255" /> .
-                        <input type="number" id="ip-range-to-b" min="0" max="255" /> .
-                        <input type="number" id="ip-range-to-c" min="0" max="255" /> .
-                        <input type="number" id="ip-range-to-d" min="0" max="255" /><br />
+                        <p>
+                            <span class="ip-input-label">From:</span>
+                            <input type="number" id="ip-range-from-a" min="0" max="255">.
+                            <input type="number" id="ip-range-from-b" min="0" max="255">.
+                            <input type="number" id="ip-range-from-c" min="0" max="255">.
+                            <input type="number" id="ip-range-from-d" min="0" max="255">
+                        </p>
+                        <p>
+                            <span class="ip-input-label">To:</span>
+                            <input type="number" id="ip-range-to-a" min="0" max="255">.
+                            <input type="number" id="ip-range-to-b" min="0" max="255">.
+                            <input type="number" id="ip-range-to-c" min="0" max="255">.
+                            <input type="number" id="ip-range-to-d" min="0" max="255">
+                        </p>
                     </div>
                 </div>
                 <div class="b-tab-list">
-                    <input type="radio" name="b-rad" class="b-rad" id="b-rad-list" />
+                    <input type="radio" name="b-rad" class="b-rad" id="b-rad-list">
                     <label for="b-rad-list"><span>IP List</span></label>
                     <div class="tab-content">
                         <p>One IP address per line</p>
@@ -47,7 +54,7 @@
             </div>
             <div style="clear: both;"></div>
 
-            <label><input type="checkbox" id="behaviour-sync-ips" />
+            <label><input type="checkbox" id="behaviour-sync-ips">
                 Synchronize IP together?</label>
 
 
@@ -56,14 +63,15 @@
                 <textarea id="whitelist" rows="5"></textarea>
             </fieldset>
 
-            <input type="submit" value="Save &amp; Apply" />
+            <input type="submit" value="Save &amp; Apply">
             <p id="status"></p>
         </form>
         <p style="text-align: right">
-            Need more? Try <a target="_blank" href="https://vpn.ccrypto.org/">CCrypto VPN</a>!<br />
+            Need more? Try <a target="_blank" href="https://vpn.ccrypto.org/">CCrypto VPN</a>!<br>
             <a target="_blank" href="https://github.com/0xa/chromium-ipfuck/">IPFuck for Chromium</a> |
             <a target="_blank" href="http://ipfuck.paulds.fr/">IPFuck</a> |
-            <a id="reset-config" href="#">default settings</a></p>
+            <a id="reset-config" href="#">default settings</a>
+        </p>
         <script src="popup.js"></script>
     </body>
 </html>

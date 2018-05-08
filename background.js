@@ -96,11 +96,7 @@ function loadSettings() {
         range_from = localStorage["range_from"].split(".");
         range_to = localStorage["range_to"].split(".");
         
-        list = Array();
-        var lslist = localStorage["list"].split(";");
-        for (var i=0; i<lslist.length; i++) {
-            list.push(lslist[i].split("."));
-        }
+        list = localStorage["list"].split(";").map(it => it.split("."));
         whitelist = localStorage["whitelist"].split(";");
     } catch(e) {
         // load defaults
@@ -117,10 +113,7 @@ function saveSettings() {
     localStorage["sync"] = sync;
     localStorage["range_from"] = range_from.join(".");
     localStorage["range_to"] = range_to.join(".");
-    localStorage["list"] = "";
-    for (var i=0; i<list.length; i++) {
-        localStorage["list"] += list[i].join(".")+";";
-    }
+    localStorage["list"] = list.map(it => it.join(".")).join(";");
     localStorage["whitelist"] = whitelist.join(";");
 }
 

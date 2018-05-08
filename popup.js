@@ -1,10 +1,4 @@
-if(typeof(String.prototype.trim) === "undefined") {
-    String.prototype.trim = function() {
-        return String(this).replace(/^\s+|\s+$/g, '');
-    };
-}
-
-
+// todo 'can't access dead object' in firefox
 function parseIp(base) {
     var ip = Array();
     ip[0] = parseInt(document.getElementById(base+"a").value);
@@ -28,14 +22,13 @@ function fillSettingsForm() {
     document.getElementById("enabled").checked = bg.enabled;
     checkFormEnabled();
     
-    for (x in bg.possibleHeaders) {
-        var h = bg.possibleHeaders[x];
-        if (bg.headers.indexOf(h) >= 0) {
-            document.getElementById("header-"+h).checked = 1;
+    bg.possibleHeaders.forEach(x => {
+        if (bg.headers.indexOf(x) >= 0) {
+            document.getElementById("header-"+x).checked = 1;
         }
-    }
+    })
     
-    if (bg.behaviour == "range") {
+    if (bg.behaviour === "range") {
         document.getElementById("b-rad-range").checked = 1;
     } else {
         document.getElementById("b-rad-list").checked = 1;
@@ -56,13 +49,12 @@ function fillSettingsForm() {
 function submitSettings() {
     var bg = chrome.extension.getBackgroundPage();
     bg.headers = [];
-    for (x in bg.possibleHeaders) {
-        var h = bg.possibleHeaders[x];
+    bg.possibleHeaders.forEach(h => {
         if (document.getElementById("header-"+h).checked) {
             console.log(h+': ENABLED');
-                        bg.headers.push(h);
+            bg.headers.push(h);
         }
-    }
+    })
     
     bg.enabled = document.getElementById("enabled").checked;
     
@@ -74,27 +66,15 @@ function submitSettings() {
     bg.range_from = parseIp("ip-range-from-");
     bg.range_to = parseIp("ip-range-to-");
     
-    bg.list = Array();
-    var inlist = document.getElementById("ip-list").value.trim().split("\n");
-    for (line in inlist) {
-        if (line == '') {
-            continue;
-        }
-        var ip = inlist[line].trim().split(".");
-        if (ip.length != 4) {
-            continue;
-        }
-        bg.list.push(ip);
-    }
+    bg.list = document.getElementById("ip-list").value.trim()
+        .split("\n")
+        .map(it => it.trim().split('.'))
+        .filter(it.length === 4);
     
-    if (document.getElementById("behaviour-sync-ips").checked) {
-        bg.sync = true;
-    } else {
-        bg.sync = false;
-    }
+    bg.sync = document.getElementById("behaviour-sync-ips").checked;
     
     bg.whitelist = document.getElementById("whitelist").value.trim().split("\n");
-    
+
     bg.saveSettings();
     bg.applySettings();
     bg.reload();
@@ -119,7 +99,7 @@ document.getElementById("reset-config").onclick = function() {
     bg.loadDefaultSettings();
     fillSettingsForm();
     checkFormEnabled();
-}
+};
 
 fillSettingsForm();
 checkFormEnabled();
