@@ -21,7 +21,7 @@ async function fillSettingsForm() {
     g = (await browser.storage.local.get(["enabled", "headers", "behaviour", "range_from", "range_to", "list",
         "whitelist", "sync"]));
     document.getElementById("enabled").checked = g.enabled;
-    await checkFormEnabled();
+    checkFormEnabled();
 
     for (let header in possibleHeaders) {
         document.getElementById("header-" + possibleHeaders[header]).checked =
@@ -48,15 +48,8 @@ async function fillSettingsForm() {
 }
 
 function submitSettings() {
-    let headers = [];
-    possibleHeaders.forEach(h => {
-        if (document.getElementById("header-" + h).checked) {
-            console.log(h + ': ENABLED');
-            headers.push(h);
-        }
-    });
     browser.storage.local.set({
-        headers: headers,
+        headers: possibleHeaders.filter(h => document.getElementById("header-" + h).checked),
         enabled: document.getElementById("enabled").checked,
         behaviour: document.getElementById("b-rad-range").checked ? "range" : "list",
         range_from: parseIp("ip-range-from-"),
@@ -74,15 +67,12 @@ function submitSettings() {
     return false;
 }
 
-async function checkFormEnabled() {
+function checkFormEnabled() {
     let d = document.getElementById("enabled");
     let fieldsets = document.getElementsByTagName("fieldset");
     for (let f in fieldsets) {
         fieldsets[f].disabled = !d.checked;
     }
-    await browser.storage.local.set({
-        enabled: d.checked
-    })
 }
 
 document.getElementById("enabled").onclick = checkFormEnabled;
