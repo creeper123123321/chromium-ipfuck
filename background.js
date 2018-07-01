@@ -1,15 +1,5 @@
+// TODO make it work on chromium
 const filter = ["<all_urls>"];
-
-
-/*
-var enabled = false;
-var headers = [];
-var behaviour = "range"; // range|list
-var sync = false;
-var range_from = [0,0,0,0];
-var range_to = [255,255,255,255];
-var list = [[0,0,0,0], [1,1,1,1]];
-var whitelist = [];*/
 
 function generateIp(behaviour, range_from, range_to, list) {
     if (behaviour === "range") {
@@ -26,7 +16,7 @@ function generateIp(behaviour, range_from, range_to, list) {
 }
 
 async function handleBeforeSendHeaders(data) {
-    g = await browser.storage.local.get(["headers", "sync", "whitelist", "enabled", "behaviour", "range_from", "range_to", "list"]);
+    let g = await browser.storage.local.get(["headers", "sync", "whitelist", "enabled", "behaviour", "range_from", "range_to", "list"]);
     if (!g.enabled) {
         return {};
     }
