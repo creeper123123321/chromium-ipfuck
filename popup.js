@@ -54,10 +54,7 @@ function submitSettings() {
         behaviour: document.getElementById("b-rad-range").checked ? "range" : "list",
         range_from: parseIp("ip-range-from-"),
         range_to: parseIp("ip-range-to-"),
-        list: document.getElementById("ip-list").value.trim()
-            .split("\n")
-            .map(it => it.trim().split('.'))
-            .filter(it => it.length === 4),
+        list: document.getElementById("ip-list").value.split("\n").map(it => it.trim()),
         sync: document.getElementById("behaviour-sync-ips").checked,
         whitelist: document.getElementById("whitelist").value.trim().split("\n")
     }).then(() => {
@@ -83,7 +80,7 @@ document.getElementById("reset-config").onclick = async function () {
         behaviour: "range",
         range_from: [0, 0, 0, 0],
         range_to: [255, 255, 255, 255],
-        list: [[0, 0, 0, 0]],
+        list: ["127.0.0.1", "192.168.1.1", "0.0.0.0"],
         sync: true,
         whitelist: ["http://ignore_this_domain\\.tld/.*"]
     });

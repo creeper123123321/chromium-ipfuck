@@ -21,7 +21,7 @@ function generateIp(behaviour, range_from, range_to, list) {
         return ip.join(".");
     }
     else {
-        return list[Math.floor(Math.random() * list.length)].join(".");
+        return list[Math.floor(Math.random() * list.length)];
     }
 }
 
