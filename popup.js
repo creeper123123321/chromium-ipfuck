@@ -54,7 +54,7 @@ function submitSettings() {
         behaviour: document.getElementById("b-rad-range").checked ? "range" : "list",
         range_from: parseIp("ip-range-from-"),
         range_to: parseIp("ip-range-to-"),
-        list: document.getElementById("ip-list").value.trim.split("\n").map(it => it.trim()),
+        list: document.getElementById("ip-list").value.trim().split("\n").map(it => it.trim()),
         sync: document.getElementById("behaviour-sync-ips").checked,
         whitelist: document.getElementById("whitelist").value.trim().split("\n")
     }).then(() => {
