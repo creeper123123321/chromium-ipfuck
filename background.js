@@ -1,4 +1,5 @@
-var filter = ["<all_urls>"];
+const filter = ["<all_urls>"];
+
 
 /*
 var enabled = false;
@@ -12,11 +13,12 @@ var whitelist = [];*/
 
 
 async function generateIp() {
-    if ((await browser.storage.local.get("behaviour")).behaviour === "range") {
+    g = (await browser.storage.local.get(["behaviour", "range_from", "range_to", "list"]));
+    if (g.behaviour === "range") {
         let ip = [];
 
-        let range_from = (await browser.storage.local.get("range_from")).range_from;
-        let range_to = (await browser.storage.local.get("range_to")).range_to;
+        let range_from = g.range_from;
+        let range_to = g.range_to;
 
         for (i = 0; i < 4; i++) {
             ip[i] = Math.floor(Math.random() * (range_to[i] - range_from[i] + 1) + range_from[i]);
@@ -24,16 +26,17 @@ async function generateIp() {
         return ip.join(".");
     }
     else {
-        list = (await browser.storage.local.get("list")).list;
+        list = g.list;
         return list[Math.floor(Math.random() * list.length)].join(".");
     }
 }
 
 async function handleBeforeSendHeaders(data) {
-    if (!(await browser.storage.local.get("enabled")).enabled) {
+    g = (await browser.storage.local.get(["headers", "sync", "whitelist", "enabled"]));
+    if (!g.enabled) {
         return {};
     }
-    let whitelist = (await browser.storage.local.get("whitelist")).whitelist;
+    let whitelist = g.whitelist;
     for (let r in whitelist) {
         if (data.url.match(whitelist[r])) {
             console.log("whitelisted");
@@ -41,9 +44,9 @@ async function handleBeforeSendHeaders(data) {
         }
     }
     value = await generateIp();
-    headers = (await browser.storage.local.get("headers")).headers;
+    headers = g.headers;
     for (let h in headers) {
-        if (!(await browser.storage.local.get("sync")).sync) {
+        if (!g.sync) {
             value = await generateIp();
         }
         data.requestHeaders.push({
@@ -53,8 +56,6 @@ async function handleBeforeSendHeaders(data) {
     }
     return {requestHeaders: data.requestHeaders};
 }
-
-if (!browser) browser = chrome;
 
 browser.webRequest.onBeforeSendHeaders.addListener(
     handleBeforeSendHeaders,

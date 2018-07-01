@@ -18,31 +18,33 @@ function fillIp(ip, base) {
 }
 
 async function fillSettingsForm() {
-    document.getElementById("enabled").checked = (await browser.storage.local.get("enabled")).enabled;
+    g = (await browser.storage.local.get(["enabled", "headers", "behaviour", "range_from", "range_to", "list",
+        "whitelist", "sync"]));
+    document.getElementById("enabled").checked = g.enabled;
     await checkFormEnabled();
 
     for (let header in possibleHeaders) {
         document.getElementById("header-" + possibleHeaders[header]).checked =
-            (await browser.storage.local.get("headers")).headers.indexOf(possibleHeaders[header]) >= 0;
+            g.headers.indexOf(possibleHeaders[header]) >= 0;
     }
 
-    if ((await browser.storage.local.get("behaviour")).behaviour === "range") {
+    if (g.behaviour === "range") {
         document.getElementById("b-rad-range").checked = true;
     } else {
         document.getElementById("b-rad-list").checked = true;
     }
 
-    fillIp((await (browser.storage.local.get("range_from"))).range_from, "ip-range-from-");
-    fillIp((await browser.storage.local.get("range_to")).range_to, "ip-range-to-");
+    fillIp(g.range_from, "ip-range-from-");
+    fillIp(g.range_to, "ip-range-to-");
 
     document.getElementById("ip-list").value = "";
-    let list = (await browser.storage.local.get("list")).list;
+    let list = g.list;
     for (let ip in list) {
         document.getElementById("ip-list").value += list[ip].join(".") + "\n";
     }
-    document.getElementById("whitelist").value = (await browser.storage.local.get("whitelist")).whitelist.join("\n");
+    document.getElementById("whitelist").value = g.whitelist.join("\n");
 
-    document.getElementById("behaviour-sync-ips").checked = (await browser.storage.local.get("sync")).sync
+    document.getElementById("behaviour-sync-ips").checked = g.sync
 }
 
 function submitSettings() {
