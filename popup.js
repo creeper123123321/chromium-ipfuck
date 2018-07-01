@@ -40,7 +40,7 @@ async function fillSettingsForm() {
     document.getElementById("ip-list").value = "";
     let list = g.list;
     for (let ip in list) {
-        document.getElementById("ip-list").value += list[ip].join(".") + "\n";
+        document.getElementById("ip-list").value += list[ip] + "\n";
     }
     document.getElementById("whitelist").value = g.whitelist.join("\n");
 
@@ -76,12 +76,12 @@ document.getElementById("enabled").onclick = checkFormEnabled;
 document.getElementById("form").onsubmit = submitSettings;
 document.getElementById("reset-config").onclick = async function () {
     await browser.storage.local.set({
-        enabled: false,
+        enabled: true,
         behaviour: "range",
         range_from: [0, 0, 0, 0],
         range_to: [255, 255, 255, 255],
         list: ["127.0.0.1", "192.168.1.1", "0.0.0.0"],
-        sync: true,
+        sync: false,
         whitelist: ["http://ignore_this_domain\\.tld/.*"]
     });
     await fillSettingsForm();
