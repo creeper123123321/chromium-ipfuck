@@ -1,6 +1,6 @@
-var filter = [ "<all_urls>" ];
-var possibleHeaders = ["X-Forwarded-For", "Client-Ip", "Via", "X-Real-IP"];
+var filter = ["<all_urls>"];
 
+/*
 var enabled = false;
 var headers = [];
 var behaviour = "range"; // range|list
@@ -8,121 +8,56 @@ var sync = false;
 var range_from = [0,0,0,0];
 var range_to = [255,255,255,255];
 var list = [[0,0,0,0], [1,1,1,1]];
-var whitelist = [];
+var whitelist = [];*/
 
 
-function generateIp() {
-    if (behaviour == "range") {
-        var ip = Array();
+async function generateIp() {
+    if ((await browser.storage.local.get("behaviour")).behaviour === "range") {
+        let ip = [];
 
-        range_from = range_from.map((octet) => parseInt(octet, 10));
-        range_to = range_to.map((octet) => parseInt(octet, 10));
+        let range_from = (await browser.storage.local.get("range_from")).range_from;
+        let range_to = (await browser.storage.local.get("range_to")).range_to;
 
-        for (var i=0; i<4; i++) {
-            ip[i] = Math.floor(Math.random()*(range_to[i]-range_from[i]+1)+range_from[i]);
+        for (i = 0; i < 4; i++) {
+            ip[i] = Math.floor(Math.random() * (range_to[i] - range_from[i] + 1) + range_from[i]);
         }
         return ip.join(".");
     }
     else {
-        return list[Math.floor(Math.random()*list.length)].join(".");
+        list = (await browser.storage.local.get("list")).list;
+        return list[Math.floor(Math.random() * list.length)].join(".");
     }
 }
 
-function handleBeforeSendHeaders(data) {
-    if (!enabled) {
+async function handleBeforeSendHeaders(data) {
+    if (!(await browser.storage.local.get("enabled")).enabled) {
         return {};
     }
-    for (var r in whitelist) {
+    let whitelist = (await browser.storage.local.get("whitelist")).whitelist;
+    for (let r in whitelist) {
         if (data.url.match(whitelist[r])) {
-            return;
+            console.log("whitelisted");
+            return {};
         }
     }
-    var xdata=data.requestHeaders;
-    var value = 0;
-    for (var h in headers) {
-        if (!(sync && (value != 0))) {
-            value = generateIp();
+    value = await generateIp();
+    headers = (await browser.storage.local.get("headers")).headers;
+    for (let h in headers) {
+        if (!(await browser.storage.local.get("sync")).sync) {
+            value = await generateIp();
         }
-        xdata.push({
+        data.requestHeaders.push({
             "name": headers[h],
             "value": value
         });
     }
-    return {requestHeaders: xdata};
+    return {requestHeaders: data.requestHeaders};
 }
 
-function registerListener() {
-    chrome.webRequest.onBeforeSendHeaders.addListener(
-        handleBeforeSendHeaders,
-        {urls:filter},
-        ["blocking","requestHeaders"]
-    );
-    console.log("registered listener.");
-}
+if (!browser) browser = chrome;
 
-function removeListener() {
-    chrome.webRequest.onBeforeSendHeaders.removeListener(
-        handleBeforeSendHeaders);
-    console.log("removed listener.");
-}
-
-function reload() {
-    // simply re-register listener
-    removeListener();
-    registerListener();
-    console.log("reload done.");
-}
-
-function loadDefaultSettings() {
-    localStorage["enabled"] = false;
-    localStorage["filter"] = "<all_urls>";
-    localStorage["headers"] = "X-Forwarded-For";
-    localStorage["behaviour"] = "range";
-    localStorage["sync"] = true;
-    localStorage["range_from"] = "0.0.0.0";
-    localStorage["range_to"] = "255.255.255.255";
-    localStorage["list"] = "0.0.0.0;1.1.1.1";
-    localStorage["whitelist"] = "http://ignore_this_domain.com/.*";
-    loadSettings();
-}
-
-function loadSettings() {
-    try {
-        enabled = localStorage["enabled"];
-        filter = localStorage["filter"].split(";");
-        headers = localStorage["headers"].split(";");
-        behaviour = localStorage["behaviour"];
-        sync = localStorage["sync"];
-        range_from = localStorage["range_from"].split(".");
-        range_to = localStorage["range_to"].split(".");
-        
-        list = localStorage["list"].split(";").map(it => it.split("."));
-        whitelist = localStorage["whitelist"].split(";");
-    } catch(e) {
-        // load defaults
-        console.log("resettings config ("+e+")");
-        loadDefaultSettings();
-    }
-}
-
-function saveSettings() {
-    localStorage["enabled"] = enabled;
-    localStorage["filter"] = filter.join(";");
-    localStorage["headers"] = headers.join(";");
-    localStorage["behaviour"] = behaviour;
-    localStorage["sync"] = sync;
-    localStorage["range_from"] = range_from.join(".");
-    localStorage["range_to"] = range_to.join(".");
-    localStorage["list"] = list.map(it => it.join(".")).join(";");
-    localStorage["whitelist"] = whitelist.join(";");
-}
-
-function applySettings() {
-    removeListener();
-    if (enabled) {
-        registerListener();
-    }
-}
-
-loadSettings();
-applySettings();
+browser.webRequest.onBeforeSendHeaders.addListener(
+    handleBeforeSendHeaders,
+    {urls: filter},
+    ["blocking", "requestHeaders"]
+);

@@ -10,5 +10,5 @@
     "background": {
         "scripts": [ "background.js" ]
     },
-    "permissions": [ "tabs", "http://*/*", "https://*/*", "webRequest", "webRequestBlocking" ]
+    "permissions": [ "tabs", "http://*/*", "https://*/*", "webRequest", "webRequestBlocking", "storage" ]
 }

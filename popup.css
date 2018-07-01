@@ -4,9 +4,7 @@
 
 
 body {
-    background: white;
     font-family: sans-serif;
-    color: black;
     min-width: 450px;
     overflow-x: hidden;
 }
